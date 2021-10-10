@@ -1,12 +1,12 @@
 &rhd_quantities
-    out_dir='out3'
+    out_dir='out'
     rho0=1d-15
     v0=1.5d7,0,0
     temp0=1000d0
     m_star=3.3e33
     t_outflow1=1d0       !outflow time span
-    temp_outflow1=2.5d4    !outflow temperature
-    mdot1=5d0           !solar mass per year
+    temp_outflow1=1.1d4    !outflow temperature
+    mdot1=1d0           !solar mass per year
     v_esc_coefficient1=1.1d0
     t_outflow2=0d0       !outflow time span
     temp_outflow2=2.5d4    !outflow temperature
