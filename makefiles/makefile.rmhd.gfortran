@@ -1,0 +1,90 @@
+All: achilles
+VPATH = data:mathlib:phylib:scheme:solvers:modules/problem
+
+objects = datastructure.o mathlib.o phylib.o constant_gamma_eos.o eos_h2_HI_HII.o eos_HI_HII.o eos_analytic.o \
+		eos_tabulated.o eos.o communication.o radiation_common_functions.o io_out.o problem.o 	\
+		boundary.o io_in.o	\
+		exactriemann.o eosriemannsolver.o hllc.o eos_hllc_tabulated.o eos_hllc_analytic.o hydro.o \
+		gravity.o petsc_fld_2d.o petsc_fld.o rt_formal_sol.o \
+		radiation.o cooling.o geometricsource.o source_control.o \
+		limiters.o recon_evolve.o godunov.o muscl.o vis.o hydroscheme.o rmhd.o
+ieos ?= 1
+ieosmodule ?=1
+iopacity ?= 1
+isolver ?= 1
+ischeme ?= 1
+iproblem ?= 1
+irecord ?= 0
+include modules/problem/makefile.problem
+eosflag = -Dieos=$(ieos) -Dieosmodule=$(ieosmodule)
+opacityflag = -Diopacity=$(iopacity)
+solverflag = -Disolver=$(isolver)
+schemeflag = -Discheme=$(ischeme)
+problemflag = -Diproblem=$(iproblem)
+recordflag = -Direcord=$(irecord)
+ompfflag = -fopenmp
+
+CC = mpicc
+FC = mpif90
+
+FFLAGS += ${PETSC_FC_INCLUDES} -cpp -ffree-line-length-512 -g -fcheck=all -Wall \
+	$(eosflag) $(opacityflag) $(solverflag) $(schemeflag) $(problemflag) $(ompfflag) $(recordflag)
+include ${PETSC_DIR}/lib/petsc/conf/variables
+include ${PETSC_DIR}/lib/petsc/conf/rules
+HDF5 = /usr/local/hdf5
+include_path += -I$(HDF5)/include
+lib_hdf5=-L$(HDF5)/lib
+LIB_DIR = $(lib_hdf5)
+LIBS= -lhdf5 -lhdf5_fortran -llapack -lblas -lm
+
+
+%.o: %.f90
+	${FLINKER} ${PETSC_LIB} $(include_path) -c $^ -o $@
+
+achilles: $(objects)
+	${FLINKER} -o achilles $(objects) $(LIB_DIR) $(LIBS) ${PETSC_LIB}
+#	${RM} *.o
+rmhd.o: rmhd.f90
+#multidimensional-hydrodynamic integrator
+hydroscheme.o: hydroscheme.f90
+vis.o: vis.f90
+muscl.o: muscl.f90
+godunov.o: godunov.f90
+recon_evolve.o: recon_evolve.f90
+limiters.o: limiters.f90
+#source terms
+source_control.o: source_control.f90
+geometricsource.o: geometricsource.f90
+cooling.o: cooling.f90
+radiation.o: radiation.f90
+rt_formal_sol.o : rt_formal_sol.f90
+petsc_fld.o: petsc_fld.f90
+petsc_fld_2d.o: petsc_fld_2d.f90
+gravity.o: gravity.f90
+#riemann solvers
+hydro.o: hydro.f90
+eos_hllc_analytic.o: eos_hllc_analytic.f90
+eos_hllc_tabulated.o: eos_hllc_tabulated.f90
+hllc.o: hllc.f90
+eosriemannsolver.o: eosriemannsolver.f90
+exactriemann.o: exactriemann.f90
+#physics, initial and boundary conditions
+boundary.o: boundary.f90
+problem.o: problem.f90
+io_out.o: io_out.f90
+io_in.o: io_in.f90
+radiation_common_functions.o: radiation_common_functions.f90
+communication.o: communication.f90
+eos.o: eos.f90
+eos_tabulated.o: eos_tabulated.f90
+eos_analytic.o: eos_analytic.f90
+eos_HI_HII.o: eos_HI_HII.f90
+eos_h2_HI_HII.o: eos_h2_HI_HII.f90
+constant_gamma_eos.o: constant_gamma_eos.f90
+phylib.o: phylib.f90
+mathlib.o: mathlib.f90
+datastructure.o: datastructure.f90
+
+.PHONY: fart
+fart:
+	rm -f $(objects) *.mod *.f90.cpp achilles gmon.out analysis.txt

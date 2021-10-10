@@ -1,0 +1,108 @@
+VPATH = data:mathlib:phylib:scheme:solvers:modules/problem
+
+objects = mathlib.o datastructure.o phylib.o constant_gamma_eos.o eos_analytic.o eos_tabulated.o eos.o io.o  \
+		  problem.o exactriemann.o eosriemannsolver.o hllc.o eos_hllc_tabulated.o eos_hllc_analytic.o  \
+		  eos_hllc_roe_analytic.o hydro.o  \
+		  godunov.o gravity.o ray_tracing.o radiation.o cooling.o geometricsource.o source_control.o rmhd.o
+ieos ?= 3
+isolver ?= 3
+gamma ?= 1.667
+igeometry ?= 0
+igravity ?= 0
+iproblem ?= 1
+iioformat ?=1
+icooling ?= 0
+iradiation ?= 0
+iopacity ?= 0
+nd ?= 1
+nx ?= 100
+ny ?= 1
+nz ?= 1
+include modules/problem/makefile.problem
+nxyzflag = -Dnx=$(nx) -Dny=$(ny) -Dnz=$(nz)
+eosflag = -Dieos=$(ieos)
+solverflag = -Disolver=$(isolver)
+gammaflag = -Dgamma_gas=$(gamma)
+geometryflag = -Digeometry=$(igeometry)
+gravityflag = -Digravity=$(igravity)
+problemflag = -Diproblem=$(iproblem)
+ioformat = -Dioformat=$(iioformat)
+coolingflag = -Dicooling=$(icooling)
+radiationflag = -Diradiation=$(iradiation)
+opacityflag = -Diopacity=$(iopacity)
+ndflag = -Dnd=$(nd)
+ompfflag = -fopenmp
+
+FC = gfortran -cpp -ffree-line-length-512
+#FC = gfortran -cpp -ffree-line-length-512 -g -fcheck=all -Wall
+FFLAGS += $(nxyzflag) $(eosflag) $(gammaflag) $(solverflag) $(geometryflag) $(problemflag) $(ioformat) $(coolingflag) \
+		  $(radiationflag) $(opacityflag) $(gravityflag) $(ndflag) $(ompfflag)
+HDF5 = /usr/local/hdf5/1.8
+LIBZ = /usr/local/zlib
+LIBSZ = /usr/local/szip
+include=-I$(HDF5)/include
+#lib_hdf5=$(HDF5)/lib/libhdf5.a $(HDF5)/lib/libhdf5_fortran.a
+#lib_zlib=$(LIBZ)/lib/libz.a
+#lib_szip=$(LIBSZ)/lib/libsz.a
+lib_hdf5=-L$(HDF5)/lib
+lib_zlib=-L$(LIBZ)/lib
+lib_szip=-L$(LIBSZ)/lib
+LIBS = $(lib_hdf5) $(lib_zlib) $(lib_szip)
+dynamiclink= -lhdf5 -lhdf5_fortran -lz -lsz -lm
+
+
+achilles: $(objects)
+#	$(FC) -o achilles $(FFLAGS) $(objects) $(LIBS)
+	$(FC) -o achilles $(FFLAGS) $(objects) $(LIBS) $(dynamiclink)
+rmhd.o: rmhd.f90
+	$(FC) $(FFLAGS) -c $(include) $^ -o $@
+source_control.o: source_control.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+geometricsource.o: geometricsource.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+cooling.o: cooling.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+radiation.o: radiation.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+ray_tracing.o: ray_tracing.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+gravity.o: gravity.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+godunov.o: godunov.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+hydro.o: hydro.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+eos_hllc_roe_analytic.o: eos_hllc_roe_analytic.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+eos_hllc_analytic.o: eos_hllc_analytic.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+eos_hllc_tabulated.o: eos_hllc_tabulated.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+hllc.o: hllc.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+eosriemannsolver.o: eosriemannsolver.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+exactriemann.o: exactriemann.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+problem.o: problem.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+io.o: io.f90
+	$(FC) $(FFLAGS) -c $(include) $^ -o $@
+eos.o: eos.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+eos_tabulated.o: eos_tabulated.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+eos_analytic.o: eos_analytic.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+constant_gamma_eos.o: constant_gamma_eos.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+phylib.o: phylib.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+datastructure.o: datastructure.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+mathlib.o: mathlib.f90
+	$(FC) $(FFLAGS) -c $^ -o $@
+
+.PHONY: clean
+clean:
+	rm -f $(objects) *.mod achilles

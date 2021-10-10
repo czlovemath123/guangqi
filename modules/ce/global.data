@@ -1,0 +1,42 @@
+$meshinfo               !mesh dimesnion, resolution, simulation length &
+!and boundary conditions
+    n_domain =  5.0112d11,3.48d14,0d0,0d0  !boundary location in numerical unit
+    tfinal = 4d6
+    timescale = 1d0
+    CFL = 0.4d0
+    v_boundary=0d0,0d0,0d0,0d0      !boundary velocity
+    hydro_bound_type = 9,1,1,1          !1=transmissive,2=reflective,3=periodic,4=diode,9=specified
+    rad_bound_type = 2,1,0,0       !1=transmissive,2=reflective,3=extrapolate,9=specified
+    nframe = 80
+    refine_type = 'mixed'           !none, static, adaptive, mixed
+    nrefine_region = 1
+    max_refine_level = 7
+    restart = .false.
+    restart_iframe = 21
+/
+$phyinfo                !this part correspond to the formulation of &
+!governing hydrodynamic equations
+    h_ratio=0.74                  !hydrogen mass ratio
+    he_ratio=0.26                 !helium mass ratio
+/
+$global_parameters
+    igravity=1
+    igeometry=2
+    icooling=0                  !0 no cooling, 1 NK-cooling
+    iradiation=4                !0 no radiation, 1 fld
+    nd=1
+    nx=512
+    ny=1
+    blk_size_nx=32
+    blk_size_ny=1
+    maw=1d0
+    gamma_gas=1.1d0
+/
+$refinement
+    refine_xmin=5.0112d11
+    refine_xmax=10.44d11
+    refine_ymin=0d0
+    refine_ymax=0d0
+    level=6
+/
+

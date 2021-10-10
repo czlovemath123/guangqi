@@ -1,0 +1,31 @@
+&rhd_quantities
+    out_dir='out3'
+    rho0=1d-15
+    v0=1.5d7,0,0
+    temp0=1000d0
+    m_star=3.3e33
+    t_outflow1=1d0       !outflow time span
+    temp_outflow1=2.5d4    !outflow temperature
+    mdot1=5d0           !solar mass per year
+    v_esc_coefficient1=1.1d0
+    t_outflow2=0d0       !outflow time span
+    temp_outflow2=2.5d4    !outflow temperature
+    mdot2=1d0           !solar mass per year
+    v_esc_coefficient2=1.5d0
+    dt_record=1d3
+    petsc_rtol=1d-10
+    record_length=13
+    energy_conserve_formalism=.true.
+    petsc_eos_rtol=2d-2
+    resolve_rad_dt=.false.
+    erad_slope_refine_thresh=0.02
+    rtau=1d-2
+    rho_crit=1d-15
+    t_interval=0d0
+    opacity_gas_rho_min=1d-18
+    opacity_gas_rho_max=1d-4
+    opacity_gas_t_min=200
+    opacity_gas_t_max=1d6
+    rho_floor=2d-18
+/
+

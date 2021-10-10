@@ -1,0 +1,31 @@
+All: exact
+VPATH = data:mathlib:phylib:scheme:solvers:extrmtest
+
+objects = datastructure.o mathlib.o phylib.o exactriemann.o extrmtest.o
+
+isolver ?= 1
+puphase ?= 2
+ieos ?= 1
+eosflag = -Dieos=$(ieos)
+solverflag = -Disolver=$(isolver)
+puphaseflag = -Dpuphase=$(puphase)
+
+FFLAGS += ${PETSC_FC_INCLUDES} -cpp -ffree-line-length-512 -pg -g -fcheck=all -Wall \
+	$(puphaseflag) $(eosflag) $(solverflag)
+include ${PETSC_DIR}/lib/petsc/conf/variables
+include ${PETSC_DIR}/lib/petsc/conf/rules
+
+%.o: %.f90
+	${FLINKER} ${PETSC_LIB} $(include) -c $^ -o $@
+
+exact:	$(objects)
+	${FLINKER} -o exact $(objects) ${PETSC_LIB}
+extrmtest.o: extrmtest.f90
+exactriemann.o: exactriemann.f90
+phylib.o: phylib.f90
+mathlib.o: mathlib.f90
+datastructure.o: datastructure.f90
+
+.PHONY: fart
+fart:
+	rm -f $(objects) *.mod exact

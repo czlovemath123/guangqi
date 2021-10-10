@@ -1,0 +1,45 @@
+All: exact
+VPATH = data:mathlib:phylib:scheme:solvers:extrmtest
+
+objects = datastructure.o mathlib.o phylib.o eos_tabulated.o exactriemann.o eosriemannsolver.o testeos.o
+
+puphase ?= 2
+ieos ?= 2
+isolver ?= 1
+testid ?= 1
+puphaseflag = -Dpuphase=$(puphase)
+eosflag = -Dieos=$(ieos)
+solverflag = -Disolver=$(isolver)
+testidflag = -Dtestid=$(testid)
+ompfflag = -fopenmp
+
+FFLAGS += ${PETSC_FC_INCLUDES} -cpp -ffree-line-length-512 -pg -g -fcheck=all -Wall \
+	$(puphaseflag) $(eosflag) $(testidflag) $(solverflag) $(ompfflag)
+include ${PETSC_DIR}/lib/petsc/conf/variables
+include ${PETSC_DIR}/lib/petsc/conf/rules
+HDF5 = /usr/local/hdf5
+LIBZ = /usr/local/zlib
+LIBSZ = /usr/local/szip
+include += -I$(HDF5)/include
+lib_hdf5=-L$(HDF5)/lib
+lib_zlib=-L$(LIBZ)/lib
+lib_szip=-L$(LIBSZ)/lib
+LIB_DIR = $(lib_hdf5) $(lib_zlib) $(lib_szip)
+LIBS= -lhdf5 -lhdf5_fortran -lz -lsz -llapack -lblas -lm
+
+%.o: %.f90
+	${FLINKER} ${PETSC_LIB} $(include) -c $^ -o $@
+
+exact: $(objects)
+	${FLINKER} -o exact $(objects) $(LIB_DIR) $(LIBS) ${PETSC_LIB}
+testeos.o: testeos.f90
+eosriemannsolver.o: eosriemannsolver.f90
+exactriemann.o: exactriemann.f90
+eos_tabulated.o: eos_tabulated.f90
+phylib.o: phylib.f90
+mathlib.o: mathlib.f90
+datastructure.o: datastructure.f90
+
+.PHONY: fart
+fart:
+	rm -f $(objects) *.mod exact

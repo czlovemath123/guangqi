@@ -1,0 +1,10 @@
+&rhd_quantities
+    m_star=2e33
+    period=2d7
+    dt_record=1d3
+    rho0=5d-8
+    v0=1d6
+    temp0=2d4
+    petsc_rtol=1d-10
+/
+
