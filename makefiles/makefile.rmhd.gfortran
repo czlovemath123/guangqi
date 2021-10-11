@@ -85,6 +85,6 @@ phylib.o: phylib.f90
 mathlib.o: mathlib.f90
 datastructure.o: datastructure.f90
 
-.PHONY: fart
-fart:
+.PHONY: deleteall
+deleteall:
 	rm -f $(objects) *.mod *.f90.cpp achilles gmon.out analysis.txt
