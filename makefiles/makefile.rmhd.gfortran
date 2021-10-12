@@ -1,4 +1,4 @@
-All: achilles
+All: guangqi
 VPATH = data:mathlib:phylib:scheme:solvers:modules/problem
 
 objects = datastructure.o mathlib.o phylib.o constant_gamma_eos.o eos_h2_HI_HII.o eos_HI_HII.o eos_analytic.o \
@@ -41,8 +41,8 @@ LIBS= -lhdf5 -lhdf5_fortran -llapack -lblas -lm
 %.o: %.f90
 	${FLINKER} ${PETSC_LIB} $(include_path) -c $^ -o $@
 
-achilles: $(objects)
-	${FLINKER} -o achilles $(objects) $(LIB_DIR) $(LIBS) ${PETSC_LIB}
+guangqi: $(objects)
+	${FLINKER} -o guangqi $(objects) $(LIB_DIR) $(LIBS) ${PETSC_LIB}
 #	${RM} *.o
 rmhd.o: rmhd.f90
 #multidimensional-hydrodynamic integrator
@@ -87,4 +87,4 @@ datastructure.o: datastructure.f90
 
 .PHONY: deleteall
 deleteall:
-	rm -f $(objects) *.mod *.f90.cpp achilles gmon.out analysis.txt
+	rm -f $(objects) *.mod *.f90.cpp guangqi gmon.out analysis.txt
